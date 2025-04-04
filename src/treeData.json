@@ -1,0 +1,38 @@
+{
+  "nodes": [
+   {"id": "Goal"},
+   {"id": "Software Engineering", "parent": "Goal"},
+   {"id": "Cyber Security", "parent": "Goal"},
+   {"id": "Data Structures", "parent": "Goal"},
+   {"id": "Software Engineering - Classes", "parent": "Software Engineering"},
+   {"id": "Software Engineering - Events", "parent": "Software Engineering"},
+   {"id": "Software Engineering - Jobs", "parent": "Software Engineering"},
+   {"id": "Cyber Security - Classes", "parent": "Cyber Security"},
+   {"id": "Cyber Security - Events", "parent": "Cyber Security"},
+   {"id": "Cyber Security - Jobs", "parent": "Cyber Security"},
+   {"id": "Data Structures - Classes", "parent": "Data Structures"},
+   {"id": "Data Structures - Events", "parent": "Data Structures"},
+   {"id": "Data Structures - Jobs", "parent": "Data Structures"},
+   {"id": "Current Classes", "parent": "Software Engineering - Classes"},
+   {"id": "Taken Classes", "parent": "Software Engineering - Classes"},
+   {"id": "Future Classes", "parent": "Software Engineering - Classes"}
+  ],
+  "links": [
+   {"source": "Goal", "target": "Software Engineering"},
+   {"source": "Goal", "target": "Cyber Security"},
+   {"source": "Goal", "target": "Data Structures"},
+   {"source": "Software Engineering", "target": "Software Engineering - Classes"},
+   {"source": "Software Engineering", "target": "Software Engineering - Events"},
+   {"source": "Software Engineering", "target": "Software Engineering - Jobs"},
+   {"source": "Cyber Security", "target": "Cyber Security - Classes"},
+   {"source": "Cyber Security", "target": "Cyber Security - Events"},
+   {"source": "Cyber Security", "target": "Cyber Security - Jobs"},
+   {"source": "Data Structures", "target": "Data Structures - Classes"},
+   {"source": "Data Structures", "target": "Data Structures - Events"},
+   {"source": "Data Structures", "target": "Data Structures - Jobs"},
+   {"source": "Software Engineering - Classes", "target": "Current Classes"},
+   {"source": "Software Engineering - Classes", "target": "Taken Classes"},
+   {"source": "Software Engineering - Classes", "target": "Future Classes"}
+  ]
+ }
+ 

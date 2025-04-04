@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Zoom3D Setup</title>
+<style>
+body { font-family: Arial, sans-serif; margin: 0; padding: 0; }
+.container { max-width: 500px; margin: 50px auto; }
+.hidden { display: none; }
+</style>
+</head>
+<body>
+<div class="container">
+  <div id="step1">
+    <h2>Setup - Step 1</h2>
+    <form id="form1">
+      <input type="text" id="firstName" placeholder="First Name" required><br><br>
+      <input type="text" id="lastName" placeholder="Last Name" required><br><br>
+      <input type="text" id="major" placeholder="Major" required><br><br>
+      <input type="number" id="gradYear" placeholder="Graduation Year" required><br><br>
+      <button type="button" id="next1">Next</button>
+    </form>
+  </div>
+  <div id="step2" class="hidden">
+    <h2>Setup - Step 2</h2>
+    <form id="form2">
+      <select id="goal" required>
+        <option value="">Select Goal</option>
+        <option value="Learn">Learn</option>
+        <option value="Career Advancement">Career Advancement</option>
+        <option value="Research">Research</option>
+      </select><br><br>
+      <button type="button" id="next2">Next</button>
+    </form>
+  </div>
+  <div id="step3" class="hidden">
+    <h2>Setup - Step 3</h2>
+    <form id="form3">
+      <select id="careerPathway" required>
+        <option value="">Select Career Pathway</option>
+        <option value="Industry">Industry</option>
+        <option value="Academia">Academia</option>
+        <option value="Entrepreneurship">Entrepreneurship</option>
+      </select><br><br>
+      <button type="button" id="finish">Finish</button>
+    </form>
+  </div>
+</div>
+<script>
+document.getElementById("next1").addEventListener("click",function(){
+ document.getElementById("step1").classList.add("hidden");
+ document.getElementById("step2").classList.remove("hidden");
+});
+document.getElementById("next2").addEventListener("click",function(){
+ document.getElementById("step2").classList.add("hidden");
+ document.getElementById("step3").classList.remove("hidden");
+});
+document.getElementById("finish").addEventListener("click",function(){
+ window.location.href = "dashboard.html";
+});
+</script>
+</body>
+</html>
