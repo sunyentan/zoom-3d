@@ -45,6 +45,7 @@ export default function SetupPage() {
                 className="w-full p-2 mb-4 border border-gray-200 rounded-md"
               />
             ))}
+            
             <button onClick={nextStep} className="w-full bg-blue-500 text-white py-2 rounded-md">Continue</button>
           </div>
         )}
@@ -70,7 +71,10 @@ export default function SetupPage() {
                 </label>
               </div>
             ))}
-            <button onClick={nextStep} className="w-full bg-blue-500 text-white py-2 rounded-md mt-4">Continue</button>
+            <div className='flex gap-x-4'>
+                <button onClick={prevStep} className="w-full bg-gray-300 text-black py-2 rounded-md mt-4">Back</button>
+                <button onClick={nextStep} className="w-full bg-blue-500 text-white py-2 rounded-md mt-4">Continue</button>
+            </div>
           </div>
         )}
 
@@ -94,7 +98,10 @@ export default function SetupPage() {
                 {pathway}
               </button>
             ))}
-            <button onClick={nextStep} className="w-full bg-blue-500 text-white py-2 rounded-md mt-4">Continue</button>
+            <div className='flex gap-x-4'>
+                <button onClick={prevStep} className="w-full bg-gray-300 text-black py-2 rounded-md mt-4">Back</button>
+                <button onClick={nextStep} className="w-full bg-blue-500 text-white py-2 rounded-md mt-4">Continue</button>
+            </div>
           </div>
         )}
 
@@ -125,7 +132,10 @@ export default function SetupPage() {
                 </li>
               ))}
             </ul>
-            <button onClick={handleSubmit} className="w-full bg-blue-500 text-white py-2 rounded-md">Finish</button>
+            <div className='flex gap-x-4'>
+                <button onClick={prevStep} className="w-full bg-gray-300 text-black py-2 rounded-md mt-4">Back</button>
+                <button onClick={handleSubmit} className="w-full bg-blue-700 text-white py-2 rounded-md mt-4">Finish</button>
+            </div>
           </div>
         )}
       </div>
