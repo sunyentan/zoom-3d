@@ -1,8 +1,10 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 
 export default function SetupPage() {
+  const router = useRouter();
   const [step, setStep] = useState(1);
   const [formData, setFormData] = useState({
     firstName: '',
@@ -24,6 +26,7 @@ export default function SetupPage() {
 
   const handleSubmit = () => {
     console.log('All setup data:', formData);
+    router.push('/dashboard');
     // Send to backend or proceed
   };
 
