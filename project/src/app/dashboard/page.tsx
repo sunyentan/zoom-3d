@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useRef, useEffect } from 'react';
+import { ChatBot } from '@/ext_components/chatbot';
 
 interface TreeNode {
   id: string;
@@ -154,7 +155,7 @@ export default function DashboardPage() {
   };
 
   return (
-    <div className="relative min-h-screen bg-gray-50 p-4">
+    <div className="relative min-h-screen bg-gray-50 p-4 w-full">
       {nodeStack.length > 0 && (
         <button
           onClick={handleBack}
@@ -184,6 +185,15 @@ export default function DashboardPage() {
           <p>Meeting notes and flashcards will be generated here.</p>
         </div>
       )}
+
+      <div className='w-full'>
+        <div className='fixed bottom-0 w-full'>
+          <div className='flex grid-cols-2'>
+            <div className='w-full'></div>
+            <div className='w-full'><ChatBot /></div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
