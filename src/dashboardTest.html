@@ -106,6 +106,38 @@
         "DAG Orientation": "td",
         initialZoom: 0.3
       };
+      const pathToComponent = {
+        "Goals/Software Engineering/Events/Past Events/Fulton Spring Career Fair 2025": "pastevents.html",
+        "Goals/Software Engineering/Events/Past Events/Software Engineers Zoom Panel": "pastevents.html",
+        "Goals/Software Engineering/Events/Suggested Events/NextLab Career Fair": "futureevents.html",
+        "Goals/Software Engineering/Events/Suggested Events/Resume Workshop": "futureevents.html",
+        "Goals/Software Engineering/Jobs/Software Engineer": "jobs.html",
+        "Goals/Software Engineering/Jobs/Backend Developer": "jobs.html",
+        "Goals/Software Engineering/Class/Past Classes/CSE110": "pastclass.html",
+        "Goals/Software Engineering/Class/Past Classes/CSE205": "pastclass.html",
+        "Goals/Software Engineering/Class/Past Classes/CSE240": "pastclass.html",
+        "Goals/Software Engineering/Class/Current Classes/CSE330": "pastclass.html",
+        "Goals/Software Engineering/Class/Current Classes/CSE340": "pastclass.html",
+        "Goals/Software Engineering/Class/Current Classes/CSE355": "pastclass.html",
+        "Goals/Software Engineering/Class/Future Classes/CSE445": "futureclass.html",
+        "Goals/Software Engineering/Class/Future Classes/CSE460": "futureclass.html",
+        "Goals/Software Engineering/Class/Future Classes/CSE450": "futureclass.html",
+        "Goals/Cyber Security/Events/Past Events/Fulton Spring Career Fair 2025": "pastevents.html",
+        "Goals/Cyber Security/Events/Past Events/Software Engineers Zoom Panel": "pastevents.html",
+        "Goals/Cyber Security/Events/Suggested Events/NextLab Career Fair": "futureevents.html",
+        "Goals/Cyber Security/Events/Suggested Events/Resume Workshop": "futureevents.html",
+        "Goals/Cyber Security/Jobs/Software Engineer": "jobs.html",
+        "Goals/Cyber Security/Jobs/Backend Developer": "jobs.html",
+        "Goals/Cyber Security/Class/Past Classes/CSE110": "pastclass.html",
+        "Goals/Cyber Security/Class/Past Classes/CSE205": "pastclass.html",
+        "Goals/Cyber Security/Class/Past Classes/CSE240": "pastclass.html",
+        "Goals/Cyber Security/Class/Current Classes/CSE330": "pastclass.html",
+        "Goals/Cyber Security/Class/Current Classes/CSE340": "pastclass.html",
+        "Goals/Cyber Security/Class/Current Classes/CSE355": "pastclass.html",
+        "Goals/Cyber Security/Class/Future Classes/CSE445": "futureclass.html",
+        "Goals/Cyber Security/Class/Future Classes/CSE460": "futureclass.html",
+        "Goals/Cyber Security/Class/Future Classes/CSE450": "futureclass.html",
+      };
       const gui = new GUI();
       gui
         .add(controls, "DAG Orientation", [
@@ -275,34 +307,31 @@
       // and then, after a short delay, either shows node options (if the node has children) or opens the modal.
       function navigateToNode(node) {
         hideNodeOptions();
-        // Use a slower transition duration (2000ms instead of 1000ms)
         graph.centerAt(node.x, node.y + 30, 2000);
         graph.zoom(6, 2000);
-        // Adjust the delay to slightly more than the transition duration
         setTimeout(() => {
-            const children = graph.childrenMap[node.path];
-            if (children && children.length > 0) {
+          const children = graph.childrenMap[node.path];
+          if (children && children.length > 0) {
             showNodeOptions(node, children);
-            } else {
-            openModal();
-            }
+          } else {
+            openModal(node);  // pass node here
+          }
         }, 2100);
-        }
+      }
+
 
       // --- Node click handling with overlay buttons ---
       graph.onNodeClick((node) => {
-        hideNodeOptions(); // Remove any previous overlay
+        hideNodeOptions();
         graph.centerAt(node.x, node.y + 30, 1000);
         graph.zoom(10, 1000);
         const children = graph.childrenMap[node.path];
         if (children && children.length > 0) {
-          // Show options after zoom completes
           setTimeout(() => {
             showNodeOptions(node, children);
           }, 1100);
         } else {
-          // Use the node's component property to load the correct component
-          openModal(node.component);
+          openModal(node);  // pass node here
         }
       });
 
@@ -359,11 +388,12 @@
         if (overlay) overlay.remove();
       }
 
-      // --- Modal open/close functions (existing) ---
-      function openModal() {
+      function openModal(node) {
         const modal = document.getElementById("modalOverlay");
+        const iframe = document.getElementById("modalContent");
         modal.style.display = "block";
-        document.getElementById("modalContent").src = componentUrl;
+        const customSrc = pathToComponent[node.path];
+        iframe.src = customSrc || "default.html"; 
       }
 
       function closeModal() {
@@ -371,35 +401,24 @@
       }
 
       // --- Load and process CSV data ---
-      fetch("treeDataTest.csv")
+      fetch("treeData.csv")
         .then((r) => r.text())
         .then(csvParse)
         .then((data) => {
           const nodes = [],
             links = [];
-            data.forEach(({ size, path, component }) => {
-              const levels = path.split("/"),
-                level = levels.length - 1,
-                module = level > 0 ? levels[1] : null,
-                leaf = levels.pop(),
-                parent = levels.join("/");
-              const node = {
-                path,
-                leaf,
-                module,
-                size: +size || 20,
-                level,
-              };
-              if (component) {
-                node.component = component;
-              }
-              nodes.push(node);
-              if (parent) {
-                links.push({ source: parent, target: path });
-              }
-            });
-
-
+          data.forEach(({ size, path }) => {
+            const levels = path.split("/"),
+              level = levels.length - 1,
+              module = level > 0 ? levels[1] : null,
+              leaf = levels.pop(),
+              parent = levels.join("/");
+            const node = { path, leaf, module, size: +size || 20, level };
+            nodes.push(node);
+            if (parent) {
+              links.push({ source: parent, target: path });
+            }
+          });
           const childrenMap = {};
           nodes.forEach((n) => {
             childrenMap[n.path] = [];
