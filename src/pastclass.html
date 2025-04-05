@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>CSE360 Review</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    .card {
+      perspective: 1000px;
+    }
+    .card-inner {
+      transition: transform 0.6s;
+      transform-style: preserve-3d;
+      position: relative;
+    }
+    .card.flipped .card-inner {
+      transform: rotateY(180deg);
+    }
+    .card-front,
+    .card-back {
+      backface-visibility: hidden;
+      position: absolute;
+      width: 100%;
+      height: 100%;
+    }
+    .card-back {
+      transform: rotateY(180deg);
+    }
+  </style>
+</head>
+<body class="bg-gray-100">
+
+<div class="flex max-w-6xl mx-auto mt-10 shadow-lg rounded-lg overflow-hidden border bg-white">
+  <!-- Left Panel: Flashcards -->
+  <div class="w-1/2 bg-gray-100 p-6 flex flex-col items-center">
+    <div class="w-full">
+      <h2 class="text-xl font-bold">CSE360</h2>
+      <p class="mt-2 text-lg font-semibold">Review Class Content</p>
+    </div>
+
+    <!-- Flashcard Viewer -->
+    <div class="relative w-full h-48 mt-6 mb-4 flex items-center justify-center space-x-4">
+      <button onclick="prevCard()" class="text-2xl font-bold bg-white px-3 py-1 rounded shadow">&larr;</button>
+
+      <div id="flashcards-container" class="card w-64 h-40 cursor-pointer" onclick="flipCard(this)">
+        <!-- Card is rendered by JS -->
+      </div>
+
+      <button onclick="nextCard()" class="text-2xl font-bold bg-white px-3 py-1 rounded shadow">&rarr;</button>
+    </div>
+  </div>
+
+  <!-- Right Panel: Accordion -->
+  <div class="w-1/2 p-6 bg-white">
+    <h3 class="text-xl font-bold mb-4">Summary</h3>
+    <div class="space-y-2">
+      <details>
+        <summary class="font-semibold cursor-pointer">Week 1: UML Diagrams</summary>
+        <ul class="ml-6 mt-2 list-disc text-sm text-blue-600 space-y-1">
+          <li class="cursor-pointer" onclick="loadFlashcards('w1c1')">Intro to UML</li>
+          <li class="cursor-pointer" onclick="loadFlashcards('w1c2')">Class Diagrams</li>
+        </ul>
+      </details>
+      <details>
+        <summary class="font-semibold cursor-pointer">Week 2: Eclipse IDE</summary>
+        <ul class="ml-6 mt-2 list-disc text-sm text-blue-600 space-y-1">
+          <li class="cursor-pointer" onclick="loadFlashcards('w2c1')">Eclipse Basics</li>
+          <li class="cursor-pointer" onclick="loadFlashcards('w2c2')">Debugging</li>
+        </ul>
+      </details>
+      <details open>
+        <summary class="font-semibold text-blue-900 cursor-pointer">Week 3: GitHub</summary>
+        <ul class="ml-6 mt-2 list-disc text-sm text-blue-600 space-y-1">
+          <li class="cursor-pointer" onclick="loadFlashcards('w3c1')">Git Commands</li>
+          <li class="cursor-pointer" onclick="loadFlashcards('w3c2')">Merge Conflicts</li>
+          <li class="cursor-pointer" onclick="loadFlashcards('w3c3')">Branches</li>
+        </ul>
+      </details>
+    </div>
+  </div>
+</div>
+
+<script>
+  const flashcardData = {
+    w1c1: [
+      { front: "What is UML?", back: "Unified Modeling Language" },
+      { front: "Why use UML?", back: "To visualize system design" }
+    ],
+    w1c2: [
+      { front: "Class Diagram", back: "Shows classes and relationships" },
+      { front: "Associations", back: "Represent object interactions" }
+    ],
+    w2c1: [
+      { front: "Eclipse?", back: "IDE for Java" },
+      { front: "Workspace?", back: "Directory for your projects" }
+    ],
+    w2c2: [
+      { front: "How to debug?", back: "Use breakpoints and debug view" },
+      { front: "Step Over?", back: "Run the next line of code" }
+    ],
+    w3c1: [
+      { front: "git push", back: "Sends commits to remote repo" },
+      { front: "git pull", back: "Fetches + merges from remote" }
+    ],
+    w3c2: [
+      { front: "Merge conflict", back: "Conflicting changes to same line" },
+      { front: "How to resolve?", back: "Edit and commit resolved file" }
+    ],
+    w3c3: [
+      { front: "Branching?", back: "Create alternate dev versions" },
+      { front: "git checkout -b", back: "Create & switch to new branch" }
+    ]
+  };
+
+  let currentFlashcards = [];
+  let currentIndex = 0;
+
+  function loadFlashcards(chapterKey) {
+    currentFlashcards = flashcardData[chapterKey] || [];
+    currentIndex = 0;
+    renderFlashcard();
+  }
+
+  function renderFlashcard() {
+    const container = document.getElementById("flashcards-container");
+    if (currentFlashcards.length === 0) {
+      container.innerHTML = "<p class='text-gray-500'>No flashcards</p>";
+      return;
+    }
+
+    const card = currentFlashcards[currentIndex];
+    container.innerHTML = `
+      <div class="card-inner bg-white rounded shadow-lg text-center items-center justify-center w-full h-full">
+        <div class="card-front flex items-center justify-center text-lg font-bold w-full h-full">${card.front}</div>
+        <div class="card-back flex items-center justify-center text-lg text-gray-700 w-full h-full">${card.back}</div>
+      </div>
+    `;
+  }
+
+  function flipCard(el) {
+    el.classList.toggle("flipped");
+  }
+
+  function nextCard() {
+    if (currentFlashcards.length === 0) return;
+    currentIndex = (currentIndex + 1) % currentFlashcards.length;
+    renderFlashcard();
+  }
+
+  function prevCard() {
+    if (currentFlashcards.length === 0) return;
+    currentIndex = (currentIndex - 1 + currentFlashcards.length) % currentFlashcards.length;
+    renderFlashcard();
+  }
+
+  // Default load
+  window.onload = () => loadFlashcards('w3c1');
+</script>
+
+</body>
+</html>
