@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>ForceGraph with Modal</title>
+  <style> body { margin: 0; } </style>
+  <script src="//cdn.jsdelivr.net/npm/force-graph"></script>
+</head>
+<body>
+    <div id="graph"></div>
+
+    <!-- Modal overlay container -->
+    <div id="modalOverlay" style="
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.7);
+        z-index: 9999;
+    ">
+        <div style="
+        position: relative;
+        margin: 5% auto;
+        width: 80%;
+        height: 80%;
+        background: white;
+        border-radius: 8px;
+        overflow: hidden;
+        ">
+        <button onclick="closeModal()" style="
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            z-index: 10000;
+            background: #333;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+        ">Close</button>
+        <iframe id="modalContent" src="" style="width: 100%; height: 100%; border: none;"></iframe>
+        </div>
+    </div>
+
+    <script type="module">
+        
+    import { csvParse } from 'https://esm.sh/d3-dsv';
+    import { forceCollide } from 'https://esm.sh/d3-force';
+    import { GUI } from 'https://esm.sh/dat.gui';
+
+    // controls
+    const controls = { 'DAG Orientation': 'td' };
+    const gui = new GUI();
+    gui.add(controls, 'DAG Orientation', ['td', 'bu', 'lr', 'rl', 'radialout', 'radialin', null])
+      .onChange(orientation => graph && graph.dagMode(orientation));
+
+    // graph config
+    const NODE_REL_SIZE = 1;
+    const graph = new ForceGraph(document.getElementById('graph'))
+      .dagMode('td')
+      .dagLevelDistance(100)
+      .backgroundColor('#101020')
+      .linkColor(() => 'rgba(255,255,255,0.2)')
+      .nodeRelSize(NODE_REL_SIZE)
+      .nodeId('path')
+      .nodeVal(node => 100 / (node.level + 1))
+      .nodeLabel('path')
+      .nodeAutoColorBy('module')
+      .linkDirectionalParticles(2)
+      .linkDirectionalParticleWidth(2)
+      .d3Force('collision', forceCollide(node => Math.sqrt(100 / (node.level + 1)) * NODE_REL_SIZE))
+      .d3VelocityDecay(0.3)
+      // Custom forces and alignment (as in your code)...
+      .onNodeClick(node => {
+        graph.centerAt(node.x, node.y+30, 1000);
+        graph.zoom(4, 1000);
+        // If the node is a leaf node, open the modal
+        if (!graph.childrenMap[node.path] || graph.childrenMap[node.path].length === 0) {
+          openModal();
+        }
+      });
+
+    function openModal() {
+      const modal = document.getElementById("modalOverlay");
+      modal.style.display = "block";
+      document.getElementById("modalContent").src = "futureclass.html";
+    }
+
+    function closeModal() {
+      document.getElementById("modalOverlay").style.display = "none";
+    }
+
+    // Fetch and parse CSV data
+    fetch('treeData.csv')
+      .then(r => r.text())
+      .then(csvParse)
+      .then(data => {
+        const nodes = [], links = [];
+        data.forEach(({ size, path }) => {
+          const levels = path.split('/'),
+                level = levels.length - 1,
+                module = level > 0 ? levels[1] : null,
+                leaf = levels.pop(),
+                parent = levels.join('/');
+          const node = { path, leaf, module, size: +size || 20, level };
+          nodes.push(node);
+          if (parent) {
+            links.push({ source: parent, target: path });
+          }
+        });
+        const childrenMap = {};
+        nodes.forEach(n => { childrenMap[n.path] = []; });
+        links.forEach(link => {
+          const parentNode = nodes.find(n => n.path === link.source);
+          const childNode = nodes.find(n => n.path === link.target);
+          if (parentNode && childNode) {
+            childrenMap[parentNode.path].push(childNode);
+          }
+        });
+        graph.childrenMap = childrenMap;
+        graph.graphData({ nodes, links });
+      });
+  </script>
+</body>
+</html>
