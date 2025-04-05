@@ -208,41 +208,44 @@
   }
 
   async function fetchGPTNotes(chapterKey, chapterTitle) {
-    const apiKey = "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"; // Replace with your actual key (keep secret!)
-    const endpoint = "https://api.openai.com/v1/chat/completions";
+    // Mock GPT prompt simulation
+    const prompt = `Please generate notes for the chapter titled "${chapterTitle}" in a software engineering course.`;
 
-    const prompt = `Give concise, beginner-friendly technical notes for a software engineering chapter titled "${chapterTitle}". Less than 50 words please.`;
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        let notes = "";
 
-    const response = await fetch(endpoint, {
-      method: "POST",
-      headers: {
-        "Authorization": `Bearer ${apiKey}`,
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        model: "gpt-4o", // Or "gpt-4" if your key supports it
-        messages: [
-          {
-            role: "system",
-            content: "You are a helpful assistant for reviewing software engineering content."
-          },
-          {
-            role: "user",
-            content: prompt
-          }
-        ],
-        temperature: 0.7
-      })
+        switch (chapterKey) {
+          case "w1c1":
+            notes = "UML (Unified Modeling Language) is used to visually represent object-oriented systems through diagrams.";
+            break;
+          case "w1c2":
+            notes = "Class diagrams illustrate the structure of classes, their attributes, methods, and relationships.";
+            break;
+          case "w2c1":
+            notes = "Eclipse is a popular IDE for Java with tools for writing, testing, and debugging applications.";
+            break;
+          case "w2c2":
+            notes = "Debugging in Eclipse includes using breakpoints, stepping through code, and inspecting variables.";
+            break;
+          case "w3c1":
+            notes = "git push uploads commits to the remote repository, while git pull downloads and merges changes.";
+            break;
+          case "w3c2":
+            notes = "Merge conflicts occur when multiple changes clash. Resolve them manually, then commit the changes.";
+            break;
+          case "w3c3":
+            notes = "Git branches allow you to work on features independently. Use git checkout -b to create one.";
+            break;
+          default:
+            notes = `No notes found for the chapter "${chapterTitle}".`;
+        }
+
+        resolve({ notes });
+      }, 500);
     });
-    console.log("SENDING...>>>")
-    const data = await response.json();
-    console.log("RECEIVED!")
-
-    // Return the GPT-generated message
-    return {
-      notes: data.choices?.[0]?.message?.content || "No response from GPT."
-    };
   }
+
   // Load default chapter
   window.onload = () => loadFlashcards('w3c1');
 </script>

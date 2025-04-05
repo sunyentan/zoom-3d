@@ -1,3 +1,6 @@
 project/node_modules
 project
 .env
+src/ai.js
+src/noteGen.css
+src/noteGen.html
