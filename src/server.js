@@ -90,7 +90,7 @@ app.post("/chat", async (req, res) => {
 
 		// Set defaults if not provided
 		const requestConfig = {
-			model: model || "gpt-3.5-turbo",
+			model: model || "chatgpt-4o-latest",
 			messages,
 			temperature: temperature || 0.7,
 			max_tokens: max_tokens || 500, // Increased default token limit
@@ -148,6 +148,7 @@ function createNoteGenerationPrompt(transcript) {
     5. Include examples when relevant
     6. Keep it concise (less than 100 words)
     7. Do not add additional information of your own. If there is insufficient content to make a note, you may choose not to generate any.
+    8. Use Markdown to format the response, using line breaks, bold, etc whenever possible.
 
     Transcript:
     ${transcript}

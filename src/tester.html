@@ -5,6 +5,7 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<title>Note generation page</title>
 		<link rel="stylesheet" href="notegeneration.css" />
+		<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 	</head>
 	<body>
 		<div class="container">
@@ -27,6 +28,11 @@
 		</div>
 
 		<script>
+			// Configure marked.js
+			marked.setOptions({
+				breaks: true, // Enable line breaks
+				gfm: true, // Enable GitHub Flavored Markdown
+			});
 			document.getElementById("translateBtn").addEventListener("click", async function () {
 				const inputText = document.getElementById("inputText").value.trim();
 				const resultDiv = document.getElementById("result");
@@ -58,7 +64,8 @@
 					}
 
 					// Display successful result
-					resultDiv.textContent = data.translatedText || "No translation returned";
+					const translatedText = data.translatedText || "No translation returned";
+					resultDiv.innerHTML = marked.parse(translatedText);
 					resultDiv.className = "success";
 				} catch (error) {
 					// Handle network errors or other exceptions
