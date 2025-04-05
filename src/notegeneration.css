@@ -67,6 +67,8 @@ p {
 .content-area {
 	display: flex;
 	gap: 20px;
+	padding: 20px;
+	padding-top: 0px;
 }
 
 .transcript-container,
