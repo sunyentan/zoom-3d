@@ -1,19 +1,48 @@
 size,path
 ,goals
 ,goals/Software Engineering
-,goals/Software Engineering/Class
-,goals/Software Engineering/Class/Past Classes
-,goals/Software Engineering/Class/Current Classes
-,goals/Software Engineering/Class/Current Classes/CSE330
-,goals/Software Engineering/Class/Current Classes/CSE355
-,goals/Software Engineering/Class/Future Classes
 ,goals/Software Engineering/Events
+,goals/Software Engineering/Class
 ,goals/Software Engineering/Jobs
+,goals/Software Engineering/Events/Past Events
+,goals/Software Engineering/Events/Suggested Events
+,goals/Software Engineering/Events/Past Events/Career Fairs
+,goals/Software Engineering/Events/Past Events/Panels
+,goals/Software Engineering/Events/Suggested Events/Career Fairs
+,goals/Software Engineering/Events/Suggested Events/Panels
+,goals/Software Engineering/Jobs/Software Engineer
+,goals/Software Engineering/Jobs/Backend Developer
+,goals/Software Engineering/Class/Past Classes
+,goals/Software Engineering/Class/Future Classes
+,goals/Software Engineering/Class/Current Classes
+,goals/Software Engineering/Class/Past Classes/CSE110
+,goals/Software Engineering/Class/Past Classes/CSE205
+,goals/Software Engineering/Class/Past Classes/240
+,goals/Software Engineering/Class/Current Classes/CSE330
+,goals/Software Engineering/Class/Current Classes/CSE340
+,goals/Software Engineering/Class/Current Classes/CSE355
+,goals/Software Engineering/Class/Future Classes/CSE445
+,goals/Software Engineering/Class/Future Classes/CSE460
+,goals/Software Engineering/Class/Future Classes/CSE450
 ,goals/Cyber Security
-,goals/Cyber Security/Class
 ,goals/Cyber Security/Events
+,goals/Cyber Security/Events/Past Events
+,goals/Cyber Security/Events/Suggested Events
+,goals/Cyber Security/Events/Past Events/Workshops
+,goals/Cyber Security/Events/Past Events/Projects
+,goals/Cyber Security/Events/Suggested Events/Career Fairs
+,goals/Cyber Security/Events/Suggested Events/Panels
 ,goals/Cyber Security/Jobs
-,goals/Algorithms
-,goals/Algorithms/Class
-,goals/Algorithms/Events
-,goals/Algorithms/Jobs
+,goals/Cyber Security/Jobs/Web Developer
+,goals/Cyber Security/Jobs/Frontend Developer
+,goals/Cyber Security/Class
+,goals/Cyber Security/Class/Past Classes
+,goals/Cyber Security/Class/Past Classes/CSE110
+,goals/Cyber Security/Class/Past Classes/CSE205
+,goals/Cyber Security/Class/Past Classes/FSE100
+,goals/Cyber Security/Class/Current Classes
+,goals/Cyber Security/Class/Current Classes/CSE240
+,goals/Cyber Security/Class/Current Classes/CSE360
+,goals/Cyber Security/Class/Future Classes
+,goals/Cyber Security/Class/Future Classes/CSE355
+,goals/Cyber Security/Class/Future Classes/CSE356

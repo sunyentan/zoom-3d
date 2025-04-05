@@ -1,94 +1,169 @@
 <head>
-    <style> body { margin: 0; } </style>
-    <script src="//cdn.jsdelivr.net/npm/force-graph"></script>
-    <!--<script src="../../dist/force-graph.js"></script>-->
-  </head>
-  
-  <body>
-    <div id="graph"></div>
-  
-    <script type="module">
-      import { csvParse } from 'https://esm.sh/d3-dsv';
-      import { forceCollide } from 'https://esm.sh/d3-force';
-      import { GUI } from 'https://esm.sh/dat.gui';
-  
-      // controls
-      const controls = { 'DAG Orientation': 'td'};
-      const gui = new GUI();
-      gui.add(controls, 'DAG Orientation', ['td', 'bu', 'lr', 'rl', 'radialout', 'radialin', null])
-        .onChange(orientation => graph && graph.dagMode(orientation));
-  
-      // graph config
-      const NODE_REL_SIZE = 1;
-      const graph = new ForceGraph(document.getElementById('graph'))
-        .dagMode('td')
-        .dagLevelDistance(50)
-        .backgroundColor('#101020')
-        .linkColor(() => 'rgba(255,255,255,0.2)')
-        .nodeRelSize(NODE_REL_SIZE)
-        .nodeId('path')
-        .nodeVal(node => 100 / (node.level + 1))
-        .nodeLabel('path')
-        .nodeAutoColorBy('module')
-        .linkDirectionalParticles(2)
-        .linkDirectionalParticleWidth(2)
-        .d3Force('collision', forceCollide(node => Math.sqrt(100 / (node.level + 1)) * NODE_REL_SIZE))
-        .d3VelocityDecay(0.3)
-        .d3Force('horizontalSeparation', alpha => {
-            const nodes = graph.graphData().nodes;
-            const minDistance = 100; 
-            for (let i = 0; i < nodes.length; i++) {
-            for (let j = i + 1; j < nodes.length; j++) {
-                const nodeA = nodes[i],
-                    nodeB = nodes[j];
-                if (nodeA.level === nodeB.level) {
-                const dx = nodeA.x - nodeB.x,
-                        absDx = Math.abs(dx);
-                if (absDx < minDistance) {
-                    const adjustment = (minDistance - absDx) * alpha * 0.5;
-                    const sign = dx < 0 ? -1 : 1;
-                    nodeA.vx += sign * adjustment;
-                    nodeB.vx -= sign * adjustment;
-                }
-                }
-            }
-            }
-        })
-        .onNodeClick(node => {
-            graph.centerAt(node.x, node.y+30, 1000);
-            graph.zoom(6, 1000); 
-        });
+  <style> body { margin: 0; } </style>
+  <script src="//cdn.jsdelivr.net/npm/force-graph"></script>
+  <!--<script src="../../dist/force-graph.js"></script>-->
+</head>
 
-  
-      fetch('treeData.csv')
-        .then(r => r.text())
-        .then(csvParse)
-        .then(data => {
-          const nodes = [], links = [];
-          data.forEach(({ size, path }) => {
-            const levels = path.split('/'),
-              level = levels.length - 1,
-              module = level > 0 ? levels[1] : null,
-              leaf = levels.pop(),
-              parent = levels.join('/');
-  
-            const node = {
-              path,
-              leaf,
-              module,
-              size: +size || 20,
-              level
-            };
-  
-            nodes.push(node);
-  
-            if (parent) {
-              links.push({source: parent, target: path, targetNode: node});
-            }
-          });
-  
-          graph.graphData({ nodes, links });
+<body>
+  <div id="graph"></div>
+
+  <script type="module">
+    import { csvParse } from 'https://esm.sh/d3-dsv';
+    import { forceCollide } from 'https://esm.sh/d3-force';
+    import { GUI } from 'https://esm.sh/dat.gui';
+
+    // controls
+    const controls = { 'DAG Orientation': 'td' };
+    const gui = new GUI();
+    gui.add(controls, 'DAG Orientation', ['td', 'bu', 'lr', 'rl', 'radialout', 'radialin', null])
+      .onChange(orientation => graph && graph.dagMode(orientation));
+
+    // graph config
+    const NODE_REL_SIZE = 1;
+    const graph = new ForceGraph(document.getElementById('graph'))
+      .dagMode('td')
+      .dagLevelDistance(100)
+      .backgroundColor('#101020')
+      .linkColor(() => 'rgba(255,255,255,0.2)')
+      .nodeRelSize(NODE_REL_SIZE)
+      .nodeId('path')
+      .nodeVal(node => 100 / (node.level + 1))
+      .nodeLabel('path')
+      .nodeAutoColorBy('module')
+      .linkDirectionalParticles(2)
+      .linkDirectionalParticleWidth(2)
+      .d3Force('collision', forceCollide(node => Math.sqrt(100 / (node.level + 1)) * NODE_REL_SIZE))
+      .d3VelocityDecay(0.3)
+      .d3Force('customHorizontal', alpha => {
+        const nodes = graph.graphData().nodes;
+        if (!nodes) return;
+        const minDistance = 50;
+        const maxDepth = Math.max(...nodes.map(n => n.level));
+        const levels = {};
+        nodes.forEach(n => {
+          if (!levels[n.level]) levels[n.level] = [];
+          levels[n.level].push(n);
         });
-    </script>
-  </body>
-  
+        Object.keys(levels).forEach(levelKey => {
+          const level = +levelKey;
+          const levelNodes = levels[level];
+          if (level === maxDepth) {
+            for (let i = 0; i < levelNodes.length; i++) {
+              for (let j = i + 1; j < levelNodes.length; j++) {
+                const a = levelNodes[i],
+                      b = levelNodes[j],
+                      dx = a.x - b.x;
+                if (Math.abs(dx) < minDistance) {
+                  const adjustment = (minDistance - Math.abs(dx)) * alpha * 0.5;
+                  if (dx < 0) {
+                    a.vx -= adjustment;
+                    b.vx += adjustment;
+                  } else {
+                    a.vx += adjustment;
+                    b.vx -= adjustment;
+                  }
+                }
+              }
+            }
+          } else {
+            levelNodes.forEach(node => {
+              const children = graph.childrenMap && graph.childrenMap[node.path];
+              if (children && children.length) {
+                const avgX = children.reduce((sum, child) => sum + child.x, 0) / children.length;
+                node.vx += (avgX - node.x) * alpha * 2;
+              }
+            });
+            for (let i = 0; i < levelNodes.length; i++) {
+              for (let j = i + 1; j < levelNodes.length; j++) {
+                const a = levelNodes[i],
+                      b = levelNodes[j],
+                      dx = a.x - b.x;
+                if (Math.abs(dx) < minDistance) {
+                  const adjustment = (minDistance - Math.abs(dx)) * alpha * 0.5;
+                  if (dx < 0) {
+                    a.vx -= adjustment;
+                    b.vx += adjustment;
+                  } else {
+                    a.vx += adjustment;
+                    b.vx -= adjustment;
+                  }
+                }
+              }
+            }
+          }
+        });
+      })
+      .d3Force('hierarchicalAlignment', alpha => {
+        const nodes = graph.graphData().nodes;
+        if (!nodes) return;
+        const childrenMap = graph.childrenMap;
+        
+        const spacingPerDepth = {
+          1: 1000,
+          2: 400,
+          3: 200,
+          4: 50,
+        };
+        
+        const level1Nodes = nodes.filter(n => n.level === 1);
+        const modules = Array.from(new Set(level1Nodes.map(n => n.module)));
+        const moduleTargets = {};
+        modules.forEach((mod, i) => {
+          moduleTargets[mod] = (i - (modules.length - 1) / 2) * spacingPerDepth[1];
+        });
+        
+        function computeTargetX(node) {
+          if (node.level === 1) {
+            return moduleTargets[node.module] || 0;
+          }
+          const parentPath = node.path.substring(0, node.path.lastIndexOf('/'));
+          const parentNode = nodes.find(n => n.path === parentPath);
+          if (!parentNode) return 0;
+          const siblings = childrenMap[parentPath] || [];
+          const siblingSpacing = spacingPerDepth[node.level] || 50;
+          const index = siblings.findIndex(n => n.path === node.path);
+          const midIndex = (siblings.length - 1) / 2;
+          return computeTargetX(parentNode) + (index - midIndex) * siblingSpacing;
+        }
+        
+        nodes.forEach(n => {
+          const targetX = computeTargetX(n);
+          n.vx += (targetX - n.x) * alpha * 0.1;
+        });
+      })
+      .onNodeClick(node => {
+        graph.centerAt(node.x, node.y+30, 1000);
+        graph.zoom(4, 1000);
+      });
+
+    fetch('treeData.csv')
+      .then(r => r.text())
+      .then(csvParse)
+      .then(data => {
+        const nodes = [], links = [];
+        data.forEach(({ size, path }) => {
+          const levels = path.split('/'),
+                level = levels.length - 1,
+                module = level > 0 ? levels[1] : null,
+                leaf = levels.pop(),
+                parent = levels.join('/');
+          const node = { path, leaf, module, size: +size || 20, level };
+          nodes.push(node);
+          if (parent) {
+            links.push({ source: parent, target: path });
+          }
+        });
+        const childrenMap = {};
+        nodes.forEach(n => { childrenMap[n.path] = []; });
+        links.forEach(link => {
+          const parentNode = nodes.find(n => n.path === link.source);
+          const childNode = nodes.find(n => n.path === link.target);
+          if (parentNode && childNode) {
+            childrenMap[parentNode.path].push(childNode);
+          }
+        });
+        graph.childrenMap = childrenMap;
+        graph.graphData({ nodes, links });
+      });
+  </script>
+</body>
