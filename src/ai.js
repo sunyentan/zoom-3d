@@ -4,7 +4,7 @@ require("dotenv").config();
 const CONFIG = {
 	ZOOM_API_ENDPOINT: "wss://your-zoom-websocket-endpoint.com",
 	CHATGPT_API_KEY: process.env.CHATGPT_API_KEY,
-	NOTE_GENERATION_INTERVAL: 120000, // Generate notes every 2 minutes
+	NOTE_GENERATION_INTERVAL: 10, // Generate notes every 2 minutes
 	MAX_TRANSCRIPT_LENGTH: 4000, // Max characters to send to ChatGPT
 };
 
