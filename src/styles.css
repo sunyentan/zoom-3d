@@ -7,4 +7,50 @@
       linear-gradient(90deg, #1d1d30 1px, transparent 1px);
     background-size: 50px 50px;
   }
+
+  .node-option-btn {
+    font-size: 15px;
+    padding: 12px 20px;
+    margin: 8px 6px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    background-color: #007bff;
+    color: white;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease;
+    min-width: 180px;
+  }
+  
+  .node-option-btn:hover {
+    background-color: #0056b3;
+    transform: translateY(-2px);
+  }
+  
+  /* Updated Cancel Button Style */
+  .node-option-cancel {
+    background-color: #dc3545;
+    margin-top: 20px;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  
+  .node-option-cancel:hover {
+    background-color: #c82333;
+  }
+  
+  /* Styling for the overlay container */
+  #nodeOptions {
+    background: rgba(255, 255, 255, 0.95);
+    padding: 25px 30px;
+    border-radius: 12px;
+    text-align: center;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+  }
+
+  body {
+    margin: 0;
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  }
   
