@@ -44,4 +44,4 @@ Clone the repo:
    git clone https://github.com/sunyentan/zoom-3d.git
 npm install
 npm run dev
-Run server for OpenAI: npm src/server.js
+npm src/server.js
