@@ -7,7 +7,7 @@ const app = express();
 const port = 3000;
 
 const CONFIG = {
-	ZOOM_API_ENDPOINT: "wss://zoom-websocket-endpoint.com",
+	ZOOM_API_ENDPOINT: process.env.ZOOM_API_ENDPOINT,
 	CHATGPT_API_KEY: process.env.CHATGPT_API_KEY,
 	MAX_TRANSCRIPT_LENGTH: 4000, // Max characters to send to ChatGPT
 };
