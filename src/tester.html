@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>API Test Page</title>
+		<style>
+			body {
+				font-family: Arial, sans-serif;
+				max-width: 600px;
+				margin: 0 auto;
+				padding: 20px;
+			}
+			.container {
+				border: 1px solid #ddd;
+				padding: 20px;
+				border-radius: 5px;
+				background-color: #f9f9f9;
+			}
+			textarea {
+				width: 100%;
+				height: 100px;
+				margin: 10px 0;
+				padding: 8px;
+				box-sizing: border-box;
+			}
+			button {
+				background-color: #4caf50;
+				color: white;
+				border: none;
+				padding: 10px 15px;
+				cursor: pointer;
+				border-radius: 4px;
+			}
+			button:hover {
+				background-color: #45a049;
+			}
+			#result {
+				margin-top: 20px;
+				padding: 10px;
+				border: 1px solid #ddd;
+				border-radius: 4px;
+				min-height: 50px;
+				background-color: white;
+			}
+			.error {
+				color: red;
+				border-color: #ffcccc;
+			}
+			.success {
+				color: green;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="container">
+			<h1>API Test Page</h1>
+			<p>Enter text to translate to French:</p>
+
+			<textarea id="inputText" placeholder="Type English text here..."></textarea>
+
+			<button id="translateBtn">Translate</button>
+
+			<h3>Result:</h3>
+			<div id="result">Translation will appear here...</div>
+		</div>
+
+		<script>
+			document.getElementById("translateBtn").addEventListener("click", async function () {
+				const inputText = document.getElementById("inputText").value.trim();
+				const resultDiv = document.getElementById("result");
+
+				// Clear previous results
+				resultDiv.className = "";
+				resultDiv.textContent = "Processing...";
+
+				if (!inputText) {
+					resultDiv.textContent = "Please enter some text to translate";
+					resultDiv.className = "error";
+					return;
+				}
+
+				try {
+					const response = await fetch("http://localhost:3000/translate", {
+						method: "POST",
+						headers: {
+							"Content-Type": "application/json",
+						},
+						body: JSON.stringify({ text: inputText }),
+					});
+
+					const data = await response.json();
+
+					if (!response.ok) {
+						// Handle server errors (400/500 status codes)
+						throw new Error(data.error || "Translation failed");
+					}
+
+					// Display successful result
+					resultDiv.textContent = data.translatedText || "No translation returned";
+					resultDiv.className = "success";
+				} catch (error) {
+					// Handle network errors or other exceptions
+					console.error("Error:", error);
+					resultDiv.textContent = `Error: ${error.message}`;
+					resultDiv.className = "error";
+				}
+			});
+		</script>
+	</body>
+</html>
