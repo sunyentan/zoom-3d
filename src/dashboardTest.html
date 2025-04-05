@@ -4,42 +4,6 @@
     <meta charset="UTF-8" />
     <link rel="stylesheet" href="styles.css">
     <title>ZOOM3D</title>
-    <style>
-      body {
-        margin: 0;
-        font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-      }
-      /* Professional styling for option buttons */
-      .node-option-btn {
-        font-size: 14px;
-        padding: 10px 15px;
-        margin: 5px;
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
-        background-color: #007BFF;
-        color: white;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-        transition: background-color 0.3s ease;
-      }
-      .node-option-btn:hover {
-        background-color: #0056b3;
-      }
-      /* Styling for the cancel button */
-      .node-option-cancel {
-        background-color: #6c757d;
-      }
-      .node-option-cancel:hover {
-        background-color: #5a6268;
-      }
-      /* Styling for the overlay container */
-      #nodeOptions {
-        background: rgba(255, 255, 255, 0.9);
-        padding: 20px;
-        border-radius: 8px;
-        text-align: center;
-      }
-    </style>
     <script src="//cdn.jsdelivr.net/npm/force-graph"></script>
   </head>
 
@@ -66,27 +30,34 @@
           position: relative;
           margin: 5% auto;
           width: 80%;
-          height: 80%;
+          height: 45%;
           background: white;
           border-radius: 8px;
           overflow: hidden;
         "
       >
-        <button
+      <button
           onclick="closeModal()"
           style="
             position: absolute;
-            top: 10px;
-            right: 10px;
+            top: 15px;
+            right: 15px;
             z-index: 10000;
-            background: #333;
+            background-color: #e74c3c;
             color: white;
             border: none;
-            padding: 5px 10px;
+            padding: 10px 16px;
+            font-size: 14px;
+            font-weight: bold;
+            border-radius: 6px;
             cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+            transition: background-color 0.3s ease;
           "
+          onmouseover="this.style.backgroundColor='#c0392b'"
+          onmouseout="this.style.backgroundColor='#e74c3c'"
         >
-          Close
+          ✕ Close
         </button>
         <iframe
           id="modalContent"
@@ -126,8 +97,8 @@
         "Goals/Cyber Security/Events/Past Events/Software Engineers Zoom Panel": "pastevents.html",
         "Goals/Cyber Security/Events/Suggested Events/NextLab Career Fair": "futureevents.html",
         "Goals/Cyber Security/Events/Suggested Events/Resume Workshop": "futureevents.html",
-        "Goals/Cyber Security/Jobs/Software Engineer": "jobs.html",
-        "Goals/Cyber Security/Jobs/Backend Developer": "jobs.html",
+        "Goals/Cyber Security/Jobs/Security Guard": "jobs.html",
+        "Goals/Cyber Security/Jobs/Cyber Sec Dude": "jobs.html",
         "Goals/Cyber Security/Class/Past Classes/CSE110": "pastclass.html",
         "Goals/Cyber Security/Class/Past Classes/CSE205": "pastclass.html",
         "Goals/Cyber Security/Class/Past Classes/CSE240": "pastclass.html",
@@ -138,25 +109,25 @@
         "Goals/Cyber Security/Class/Future Classes/CSE460": "futureclass.html",
         "Goals/Cyber Security/Class/Future Classes/CSE450": "futureclass.html",
       };
-      const gui = new GUI();
-      gui
-        .add(controls, "DAG Orientation", [
-          "td",
-          "bu",
-          "lr",
-          "rl",
-          "radialout",
-          "radialin",
-          null,
-        ])
-        .onChange((orientation) => graph && graph.dagMode(orientation));
-      gui
-        .add(controls, "initialZoom", 0.1, 2)
-        .name("Initial Zoom (lower = out)")
-        .onChange((zoomVal) => {
-          // Update the view if needed in real-time
-          graph.zoom(zoomVal, 0);
-        });
+      // const gui = new GUI();
+      // gui
+      //   .add(controls, "DAG Orientation", [
+      //     "td",
+      //     "bu",
+      //     "lr",
+      //     "rl",
+      //     "radialout",
+      //     "radialin",
+      //     null,
+      //   ])
+      //   .onChange((orientation) => graph && graph.dagMode(orientation));
+      // gui
+      //   .add(controls, "initialZoom", 0.1, 2)
+      //   .name("Initial Zoom (lower = out)")
+      //   .onChange((zoomVal) => {
+      //     // Update the view if needed in real-time
+      //     graph.zoom(zoomVal, 0);
+      //   });
 
       // Graph configuration
       const NODE_REL_SIZE = 1;
@@ -355,7 +326,7 @@
         const rect = graphEl.getBoundingClientRect();
         nodeOptions.style.position = "absolute";
         nodeOptions.style.left = rect.left + rect.width / 2 + "px";
-        nodeOptions.style.top = rect.top + rect.height / 2 + "px";
+        nodeOptions.style.top = rect.top + rect.height * 0.9 + "px";
         nodeOptions.style.transform = "translate(-50%, -50%)";
         nodeOptions.style.zIndex = "10001";
         nodeOptions.addEventListener("click", (e) => e.stopPropagation());
@@ -367,6 +338,7 @@
           btn.innerText = child.leaf;
           btn.onclick = function (e) {
             e.stopPropagation();
+            hideNodeOptions();
             navigateToNode(child);
           };
           nodeOptions.appendChild(btn);
@@ -399,6 +371,7 @@
       function closeModal() {
         document.getElementById("modalOverlay").style.display = "none";
       }
+      window.closeModal = closeModal;
 
       // --- Load and process CSV data ---
       fetch("treeData.csv")
