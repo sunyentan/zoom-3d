@@ -6,7 +6,10 @@ ZOOM3D analyzes class discussions (via Zoom transcripts) and student aspirations
 - 🎯 **Tailored course recommendations**  
 - 📅 **Relevant workshops/events** for skill growth  
 
-[Live Demo](#) 
+Our Product 
+<div align="center">
+  <img src="media/ZOOM3DCoverImg.png" alt="EduPath AI Product Cover" width="600"/>
+</div>
 
 ## 🚀 Key Features
 - **Transcript Analysis**: Extracts key topics from Zoom recordings using NLP.
