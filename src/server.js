@@ -10,6 +10,7 @@ const CONFIG = {
 	ZOOM_API_ENDPOINT: process.env.ZOOM_API_ENDPOINT,
 	CHATGPT_API_KEY: process.env.CHATGPT_API_KEY,
 	MAX_TRANSCRIPT_LENGTH: 4000, // Max characters to send to ChatGPT
+	GPT_MODEL: "gpt-4o-2024-11-20",
 };
 
 // Middleware to parse JSON requests
@@ -17,7 +18,7 @@ app.use(cors());
 app.use(express.json());
 
 // Defines a route that makes a call to the OpenAI API
-app.post("/translate", async (req, res) => {
+app.post("/generate-notes", async (req, res) => {
 	console.log("Received request body:", req.body);
 
 	try {
@@ -32,7 +33,7 @@ app.post("/translate", async (req, res) => {
 		const response = await axios.post(
 			"https://api.openai.com/v1/chat/completions",
 			{
-				model: "gpt-4o-2024-11-20",
+				model: CONFIG.GPT_MODEL,
 				messages: [
 					{
 						role: "system",
@@ -44,7 +45,7 @@ app.post("/translate", async (req, res) => {
 						content: createNoteGenerationPrompt(text),
 					},
 				],
-				max_tokens: 60,
+				max_tokens: 200,
 				temperature: 0.7,
 			},
 			{
@@ -90,7 +91,7 @@ app.post("/chat", async (req, res) => {
 
 		// Set defaults if not provided
 		const requestConfig = {
-			model: model || "chatgpt-4o-latest",
+			model: CONFIG.GPT_MODEL,
 			messages,
 			temperature: temperature || 0.7,
 			max_tokens: max_tokens || 500, // Increased default token limit
@@ -131,7 +132,7 @@ app.post("/chat", async (req, res) => {
 
 // Start the server
 app.listen(port, () => {
-	console.log(`Server is listening.`);
+	console.log(`Server is listening at port ${port}.`);
 });
 
 // Create the user prompt for ChatGPT
