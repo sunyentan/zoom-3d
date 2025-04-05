@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Job Carousel</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100">
+
+<div class="flex max-w-6xl mx-auto mt-10 shadow-lg rounded-lg overflow-hidden border bg-white">
+  <!-- Left Panel: Job Titles -->
+  <div class="w-1/2 bg-gray-100 p-6 flex flex-col items-center">
+    <h2 class="text-2xl font-bold">Software Engineering</h2>
+    <p class="mt-2 text-lg font-semibold">Related Job Positions</p>
+
+    <div class="relative w-full h-48 mt-6 mb-4 flex items-center justify-center space-x-4">
+      <button onclick="prevJob()" class="text-2xl font-bold bg-black text-white w-8 h-8 rounded-full flex items-center justify-center">&larr;</button>
+
+      <div class="bg-white rounded shadow-md w-64 h-32 flex items-center justify-center text-xl font-bold text-center px-4">
+        <span id="job-title">Full Stack Developer</span>
+      </div>
+
+      <button onclick="nextJob()" class="text-2xl font-bold bg-black text-white w-8 h-8 rounded-full flex items-center justify-center">&rarr;</button>
+    </div>
+
+    <!-- Dots -->
+    <div class="flex space-x-1">
+      <span v-for="(_, i) in jobData" class="w-2 h-2 rounded-full" :class="i === currentIndex ? 'bg-blue-500' : 'bg-gray-300'"></span>
+    </div>
+  </div>
+
+  <!-- Right Panel: Companies Hiring -->
+  <div class="w-1/2 p-6 bg-white">
+    <h3 class="text-xl font-bold mb-4">Companies Hiring</h3>
+    <ul id="company-list" class="divide-y divide-gray-300">
+      <!-- Rendered by JS -->
+    </ul>
+  </div>
+</div>
+
+<script>
+  const jobData = [
+    {
+      title: "Full Stack Developer",
+      companies: ["Zoom", "Waymo", "Amazon", "Oracle"]
+    },
+    {
+      title: "Backend Engineer",
+      companies: ["Netflix", "Spotify", "Airbnb", "Stripe"]
+    },
+    {
+      title: "Frontend Developer",
+      companies: ["Google", "Meta", "Apple", "Shopify"]
+    },
+    {
+      title: "DevOps Engineer",
+      companies: ["Docker", "GitHub", "Atlassian", "Datadog"]
+    },
+    {
+      title: "Mobile App Developer",
+      companies: ["Uber", "Grab", "ByteDance", "LINE"]
+    }
+  ];
+
+  let currentIndex = 0;
+
+  function renderJob() {
+    document.getElementById("job-title").textContent = jobData[currentIndex].title;
+
+    const companyList = document.getElementById("company-list");
+    companyList.innerHTML = "";
+    jobData[currentIndex].companies.forEach(company => {
+      const li = document.createElement("li");
+      li.className = "flex justify-between py-2 text-lg";
+      li.innerHTML = `<span>${company}</span><span class="text-gray-500 text-xl">&#8594;</span>`;
+      companyList.appendChild(li);
+    });
+  }
+
+  function nextJob() {
+    currentIndex = (currentIndex + 1) % jobData.length;
+    renderJob();
+  }
+
+  function prevJob() {
+    currentIndex = (currentIndex - 1 + jobData.length) % jobData.length;
+    renderJob();
+  }
+
+  // Initial load
+  window.onload = renderJob;
+</script>
+
+</body>
+</html>
