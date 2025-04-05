@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Note generation page</title>
+		<link rel="stylesheet" href="notegeneration.css" />
+		<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+	</head>
+	<body>
+		<div class="container">
+			<header>
+				<h1>Lesson Notes Generator</h1>
+			</header>
+		</div>
+
+		<div class="content-area">
+			<div class="manual-input-container">
+				<h3>Manual Transcript Input</h3>
+				<textarea id="inputText" placeholder="Enter transcript text here..."></textarea>
+				<button id="translateBtn">Generate notes</button>
+			</div>
+
+			<div class="notes-container">
+				<h3>Generated Notes</h3>
+				<div id="result"></div>
+			</div>
+		</div>
+
+		<script>
+			// Configure marked.js
+			marked.setOptions({
+				breaks: true, // Enable line breaks
+				gfm: true, // Enable GitHub Flavored Markdown
+			});
+			document.getElementById("translateBtn").addEventListener("click", async function () {
+				const inputText = document.getElementById("inputText").value.trim();
+				const resultDiv = document.getElementById("result");
+
+				// Clear previous results
+				resultDiv.className = "";
+				resultDiv.textContent = "Processing...";
+
+				if (!inputText) {
+					resultDiv.textContent = "Please enter some text to translate";
+					resultDiv.className = "error";
+					return;
+				}
+
+				try {
+					const response = await fetch("http://localhost:3000/translate", {
+						method: "POST",
+						headers: {
+							"Content-Type": "application/json",
+						},
+						body: JSON.stringify({ text: inputText }),
+					});
+
+					const data = await response.json();
+
+					if (!response.ok) {
+						// Handle server errors (400/500 status codes)
+						throw new Error(data.error || "Translation failed");
+					}
+
+					// Display successful result
+					const translatedText = data.translatedText || "No translation returned";
+					resultDiv.innerHTML = marked.parse(translatedText);
+					resultDiv.className = "success";
+				} catch (error) {
+					// Handle network errors or other exceptions
+					console.error("Error:", error);
+					resultDiv.textContent = `Error: ${error.message}`;
+					resultDiv.className = "error";
+				}
+			});
+		</script>
+	</body>
+</html>

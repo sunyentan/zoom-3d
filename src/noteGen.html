@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Zoom Lesson Notes Generator</title>
+		<link rel="stylesheet" href="noteGen.css" />
+	</head>
+	<body>
+		<div class="container">
+			<header>
+				<h1>Zoom Lesson Notes Generator</h1>
+				<p>Real-time study notes from your Zoom classes</p>
+			</header>
+
+			<div class="status-container">
+				<div id="connection-status" class="status-offline">Offline</div>
+				<div id="transcript-status">No active transcript</div>
+			</div>
+
+			<div class="content-area">
+				<div class="transcript-container">
+					<h2>Transcript</h2>
+					<div id="transcript-display"></div>
+				</div>
+
+				<div class="notes-container">
+					<h2>Generated Notes</h2>
+					<div id="notes-display"></div>
+				</div>
+			</div>
+
+			<div class="manual-input-container">
+				<h2>Manual Transcript Input</h2>
+				<textarea id="manual-transcript-input" placeholder="Enter transcript text here..."></textarea>
+				<div class="speaker-selection">
+					<label for="speaker-name">Speaker:</label>
+					<input type="text" id="speaker-name" placeholder="Instructor" />
+				</div>
+				<button id="submit-manual-transcript" class="btn-primary">Submit for Analysis</button>
+			</div>
+
+			<!-- Note Confirmation Modal -->
+			<div id="note-modal" class="modal">
+				<div class="modal-content">
+					<h3>New Study Note Generated</h3>
+					<div id="modal-note-content"></div>
+					<div class="modal-buttons">
+						<button id="understand-btn" class="btn-success">I Understand</button>
+						<button id="confused-btn" class="btn-warning">I'm Confused</button>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<script src="ai.js"></script>
+	</body>
+</html>
