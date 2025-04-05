@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>CSE360 Review</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    .card {
+      perspective: 1000px;
+    }
+    .card-inner {
+      transition: transform 0.6s;
+      transform-style: preserve-3d;
+      position: relative;
+    }
+    .card.flipped .card-inner {
+      transform: rotateY(180deg);
+    }
+    .card-front,
+    .card-back {
+      backface-visibility: hidden;
+      position: absolute;
+      width: 100%;
+      height: 100%;
+    }
+    .card-back {
+      transform: rotateY(180deg);
+    }
+  </style>
+</head>
+<body class="bg-gray-100">
+
+<div class="flex max-w-6xl mx-auto mt-10 shadow-lg rounded-lg overflow-hidden border bg-white">
+  <!-- Left Panel: Flashcards + Notes -->
+  <div class="w-1/2 bg-gray-100 p-6 flex flex-col items-center">
+    <div class="w-full">
+      <h2 class="text-xl font-bold">CSE360</h2>
+      <p class="mt-2 text-lg font-semibold">Review Class Content</p>
+    </div>
+
+    <!-- Flashcard Viewer & Navigation -->
+    <div id="flashcard-view" class="relative w-full h-48 mt-6 mb-4 flex items-center justify-center space-x-4">
+      <button onclick="prevCard()" class="text-2xl font-bold bg-white px-3 py-1 rounded shadow">&larr;</button>
+
+      <div id="flashcards-container" class="card w-64 h-40 cursor-pointer overflow-hidden" onclick="flipCard(this)">
+        <!-- Card is rendered by JS -->
+      </div>
+
+      <button onclick="nextCard()" class="text-2xl font-bold bg-white px-3 py-1 rounded shadow">&rarr;</button>
+    </div>
+
+    <!-- Notes Display Area -->
+    <div id="notes-container" class="hidden w-full h-48 mt-6 mb-4 overflow-y-auto p-4 border rounded bg-gray-50 relative">
+      <button onclick="exitNotes()" class="absolute top-2 right-4 text-red-500 underline text-sm">Exit</button>
+      <div id="notes-content" class="text-sm text-gray-800 whitespace-pre-wrap"></div>
+    </div>
+  </div>
+
+  <!-- Right Panel: Accordion Summary -->
+  <div class="w-1/2 p-6 bg-white">
+    <h3 class="text-xl font-bold mb-4">Summary</h3>
+    <div class="space-y-2">
+      <details>
+        <summary class="font-semibold cursor-pointer">Week 1: UML Diagrams</summary>
+        <ul class="ml-6 mt-2 list-disc text-sm text-blue-600 space-y-1">
+          <li class="cursor-pointer flex justify-between items-center">
+            <span onclick="loadFlashcards('w1c1')">Intro to UML</span>
+            <button onclick="loadNotes('w1c1', 'Intro to UML')" class="ml-2 text-sm text-blue-800 underline">Notes</button>
+          </li>
+          <li class="cursor-pointer flex justify-between items-center">
+            <span onclick="loadFlashcards('w1c2')">Class Diagrams</span>
+            <button onclick="loadNotes('w1c2', 'Class Diagrams')" class="ml-2 text-sm text-blue-800 underline">Notes</button>
+          </li>
+        </ul>
+      </details>
+      <details>
+        <summary class="font-semibold cursor-pointer">Week 2: Eclipse IDE</summary>
+        <ul class="ml-6 mt-2 list-disc text-sm text-blue-600 space-y-1">
+          <li class="cursor-pointer flex justify-between items-center">
+            <span onclick="loadFlashcards('w2c1')">Eclipse Basics</span>
+            <button onclick="loadNotes('w2c1', 'Eclipse Basics')" class="ml-2 text-sm text-blue-800 underline">Notes</button>
+          </li>
+          <li class="cursor-pointer flex justify-between items-center">
+            <span onclick="loadFlashcards('w2c2')">Debugging</span>
+            <button onclick="loadNotes('w2c2', 'Debugging')" class="ml-2 text-sm text-blue-800 underline">Notes</button>
+          </li>
+        </ul>
+      </details>
+      <details open>
+        <summary class="font-semibold text-blue-900 cursor-pointer">Week 3: GitHub</summary>
+        <ul class="ml-6 mt-2 list-disc text-sm text-blue-600 space-y-1">
+          <li class="cursor-pointer flex justify-between items-center">
+            <span onclick="loadFlashcards('w3c1')">Git Commands</span>
+            <button onclick="loadNotes('w3c1', 'Git Commands')" class="ml-2 text-sm text-blue-800 underline">Notes</button>
+          </li>
+          <li class="cursor-pointer flex justify-between items-center">
+            <span onclick="loadFlashcards('w3c2')">Merge Conflicts</span>
+            <button onclick="loadNotes('w3c2', 'Merge Conflicts')" class="ml-2 text-sm text-blue-800 underline">Notes</button>
+          </li>
+          <li class="cursor-pointer flex justify-between items-center">
+            <span onclick="loadFlashcards('w3c3')">Branches</span>
+            <button onclick="loadNotes('w3c3', 'Branches')" class="ml-2 text-sm text-blue-800 underline">Notes</button>
+          </li>
+        </ul>
+      </details>
+      <details>
+        <summary class="font-semibold cursor-pointer">Week 4: JavaFX</summary>
+        <ul class="ml-6 mt-2 list-disc text-sm text-blue-600 space-y-1">
+          <li class="cursor-pointer flex justify-between items-center">
+            <span onclick="loadFlashcards('w4c1')">FXML</span>
+            <button onclick="window.location.href='tester.html'" class="ml-2 text-sm bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600">
+              Generate
+            </button>
+          </li>
+        </ul>
+      </details>
+      
+    </div>
+  </div>
+</div>
+
+<script>
+  const flashcardData = {
+    w1c1: [
+      { front: "What is UML?", back: "Unified Modeling Language" },
+      { front: "Why use UML?", back: "To visualize system design" }
+    ],
+    w1c2: [
+      { front: "Class Diagram", back: "Shows classes and relationships" },
+      { front: "Associations", back: "Represent object interactions" }
+    ],
+    w2c1: [
+      { front: "Eclipse?", back: "IDE for Java" },
+      { front: "Workspace?", back: "Directory for your projects" }
+    ],
+    w2c2: [
+      { front: "How to debug?", back: "Use breakpoints and debug view" },
+      { front: "Step Over?", back: "Run the next line of code" }
+    ],
+    w3c1: [
+      { front: "git push", back: "Sends commits to remote repo" },
+      { front: "git pull", back: "Fetches + merges from remote" }
+    ],
+    w3c2: [
+      { front: "Merge conflict", back: "Conflicting changes to same line" },
+      { front: "How to resolve?", back: "Edit and commit resolved file" }
+    ],
+    w3c3: [
+      { front: "Branching?", back: "Create alternate dev versions" },
+      { front: "git checkout -b", back: "Create & switch to new branch" }
+    ]
+  };
+
+  let currentFlashcards = [];
+  let currentIndex = 0;
+
+  function loadFlashcards(chapterKey) {
+    currentFlashcards = flashcardData[chapterKey] || [];
+    currentIndex = 0;
+    document.getElementById("notes-container").classList.add("hidden");
+    document.getElementById("flashcard-view").classList.remove("hidden");
+    renderFlashcard();
+  }
+
+  function renderFlashcard() {
+    const container = document.getElementById("flashcards-container");
+    if (currentFlashcards.length === 0) {
+      container.innerHTML = "<p class='text-gray-500'>No flashcards</p>";
+      return;
+    }
+
+    const card = currentFlashcards[currentIndex];
+    container.innerHTML = `
+      <div class="card-inner bg-white rounded shadow-lg text-center items-center justify-center w-full h-full">
+        <div class="card-front flex items-center justify-center text-lg font-bold w-full h-full">${card.front}</div>
+        <div class="card-back flex items-center justify-center text-lg text-gray-700 w-full h-full">${card.back}</div>
+      </div>
+    `;
+  }
+
+  function flipCard(el) {
+    el.classList.toggle("flipped");
+  }
+
+  function nextCard() {
+    if (currentFlashcards.length === 0) return;
+    currentIndex = (currentIndex + 1) % currentFlashcards.length;
+    renderFlashcard();
+  }
+
+  function prevCard() {
+    if (currentFlashcards.length === 0) return;
+    currentIndex = (currentIndex - 1 + currentFlashcards.length) % currentFlashcards.length;
+    renderFlashcard();
+  }
+
+  async function loadNotes(chapterKey, chapterTitle) {
+    document.getElementById("flashcard-view").classList.add("hidden");
+    document.getElementById("notes-container").classList.remove("hidden");
+
+    const notesResponse = await fetchGPTNotes(chapterKey, chapterTitle);
+    document.getElementById("notes-content").innerText = notesResponse.notes;
+  }
+
+  function exitNotes() {
+    document.getElementById("notes-container").classList.add("hidden");
+    document.getElementById("flashcard-view").classList.remove("hidden");
+  }
+
+  async function fetchGPTNotes(chapterKey, chapterTitle) {
+    const apiKey = "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"; // Replace with your actual key (keep secret!)
+    const endpoint = "https://api.openai.com/v1/chat/completions";
+
+    const prompt = `Give concise, beginner-friendly technical notes for a software engineering chapter titled "${chapterTitle}". Less than 50 words please.`;
+
+    const response = await fetch(endpoint, {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${apiKey}`,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        model: "gpt-4o", // Or "gpt-4" if your key supports it
+        messages: [
+          {
+            role: "system",
+            content: "You are a helpful assistant for reviewing software engineering content."
+          },
+          {
+            role: "user",
+            content: prompt
+          }
+        ],
+        temperature: 0.7
+      })
+    });
+    console.log("SENDING...>>>")
+    const data = await response.json();
+    console.log("RECEIVED!")
+
+    // Return the GPT-generated message
+    return {
+      notes: data.choices?.[0]?.message?.content || "No response from GPT."
+    };
+  }
+  // Load default chapter
+  window.onload = () => loadFlashcards('w3c1');
+</script>
+
+</body>
+</html>

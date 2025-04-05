@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Future Class Carousel</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100">
+
+<div class="flex max-w-6xl mx-auto mt-10 shadow-lg rounded-lg overflow-hidden border bg-white">
+  <!-- Left Panel: Job Titles -->
+  <div class="w-1/2 bg-gray-100 p-6 flex flex-col items-center">
+    <h2 class="text-2xl font-bold">Operating Systems</h2>
+    <p class="mt-2 text-lg font-semibold">Related Job Positions</p>
+
+    <div class="relative w-full h-48 mt-6 mb-4 flex items-center justify-center space-x-4">
+      <button onclick="prevJob()" class="text-2xl font-bold bg-black text-white w-8 h-8 rounded-full flex items-center justify-center">&larr;</button>
+
+      <div class="bg-white rounded shadow-md w-64 h-32 flex items-center justify-center text-xl font-bold text-center px-4">
+        <span id="job-title">Embedded Driver Engineer</span>
+      </div>
+
+      <button onclick="nextJob()" class="text-2xl font-bold bg-black text-white w-8 h-8 rounded-full flex items-center justify-center">&rarr;</button>
+    </div>
+
+    <!-- Dots -->
+    <div class="flex space-x-1">
+      <span v-for="(_, i) in jobData" class="w-2 h-2 rounded-full" :class="i === currentIndex ? 'bg-blue-500' : 'bg-gray-300'"></span>
+    </div>
+  </div>
+
+  <!-- Right Panel: Companies Hiring -->
+  <div class="w-1/2 p-6 bg-white">
+    <h3 class="text-xl font-bold mb-4">Objectives/Skills</h3>
+    <ul id="skills-list" class="divide-y divide-gray-300">
+      <!-- Rendered by JS -->
+       <li>Multithreading</li>
+    </ul>
+  </div>
+</div>
+
+<script>
+    const jobData = [
+  {
+    title: "Embedded Systems Engineer",
+    objectives: [
+      "Design and implement real-time operating system (RTOS) features.",
+      "Optimize memory and performance for constrained environments.",
+      "Interface directly with hardware using low-level programming."
+    ],
+    skills: [
+      "C/C++", "RTOS (FreeRTOS, VxWorks)", "Memory Management", "Interrupt Handling", "Multithreading"
+    ]
+  },
+  {
+    title: "Kernel Developer",
+    objectives: [
+      "Develop and maintain kernel modules and drivers.",
+      "Improve operating system performance and resource management.",
+      "Diagnose and resolve low-level system issues."
+    ],
+    skills: [
+      "Linux Kernel", "C", "System Calls", "Process Scheduling", "Virtual Memory"
+    ]
+  },
+  {
+    title: "Systems Programmer",
+    objectives: [
+      "Write low-level code that interacts with OS components.",
+      "Develop efficient system-level utilities and services.",
+      "Optimize OS behavior for specific applications."
+    ],
+    skills: [
+      "Assembly / C", "POSIX APIs", "Thread Synchronization", "I/O Handling", "Performance Profiling"
+    ]
+  },
+  {
+    title: "Site Reliability Engineer (SRE)",
+    objectives: [
+      "Ensure high system uptime and reliability.",
+      "Monitor system performance and automate operational tasks.",
+      "Manage OS-level configurations for scalability and security."
+    ],
+    skills: [
+      "Linux / Unix", "Shell Scripting", "Monitoring Tools (Prometheus, Grafana)", "Concurrency", "System Debugging"
+    ]
+  },
+  {
+    title: "Virtualization Engineer",
+    objectives: [
+      "Design and maintain virtual machines and containers.",
+      "Implement hypervisors and virtual device drivers.",
+      "Optimize system performance in virtual environments."
+    ],
+    skills: [
+      "KVM / VMware / VirtualBox", "Containerization (Docker)", "Kernel Modules", "Scheduling", "Resource Allocation"
+    ]
+  }
+];
+
+  let currentIndex = 0;
+
+  function renderJob() {
+    document.getElementById("job-title").textContent = jobData[currentIndex].title;
+  
+    const skillList = document.getElementById("skills-list");
+    skillList.innerHTML = "";
+  
+    const objectivesHeader = document.createElement("li");
+    objectivesHeader.className = "font-semibold text-blue-600 pt-2";
+    objectivesHeader.textContent = "Objectives:";
+    skillList.appendChild(objectivesHeader);
+  
+    jobData[currentIndex].objectives.forEach(obj => {
+      const li = document.createElement("li");
+      li.className = "py-1 pl-4 list-disc list-inside";
+      li.textContent = obj;
+      skillList.appendChild(li);
+    });
+  
+    const skillsHeader = document.createElement("li");
+    skillsHeader.className = "font-semibold text-blue-600 pt-4";
+    skillsHeader.textContent = "Skills:";
+    skillList.appendChild(skillsHeader);
+  
+    jobData[currentIndex].skills.forEach(skill => {
+      const li = document.createElement("li");
+      li.className = "py-1 pl-4 list-disc list-inside";
+      li.textContent = skill;
+      skillList.appendChild(li);
+    });
+  }
+  
+  function nextJob() {
+    currentIndex = (currentIndex + 1) % jobData.length;
+    renderJob();
+  }
+
+  function prevJob() {
+    currentIndex = (currentIndex - 1 + jobData.length) % jobData.length;
+    renderJob();
+  }
+
+  // Initial load
+  window.onload = renderJob;
+</script>
+
+</body>
+</html>
