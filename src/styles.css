@@ -1,0 +1,10 @@
+#graph {
+    width: 100vw;
+    height: 100vh;
+    background-color: #000000;
+    background-image: 
+      linear-gradient(hsl(240, 25%, 15%) 1px, transparent 1px),
+      linear-gradient(90deg, #1d1d30 1px, transparent 1px);
+    background-size: 50px 50px;
+  }
+  
