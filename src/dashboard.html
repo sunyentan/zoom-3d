@@ -1,90 +1,94 @@
-<!DOCTYPE html>
-<html>
 <head>
-<meta charset="UTF-8">
-<title>Zoom3D Dashboard</title>
-<style>
-body, html { margin: 0; padding: 0; height: 100%; overflow: hidden; }
-#graph { width: 70%; height: 100%; float: left; }
-#overlay { width: 30%; height: 100%; float: right; background: #f0f0f0; overflow-y: auto; padding: 20px; box-sizing: border-box; display: none; }
-</style>
-<script src="https://cdn.jsdelivr.net/npm/force-graph"></script>
-</head>
-<body>
-<div id="graph"></div>
-<div id="overlay">
-  <h2>Class Notes & Flashcards</h2>
-  <p>Notes and flashcards organized by weeks/lessons will appear here.</p>
-  <p>OpenAI API Token: <span id="apiToken">[YOUR_OPENAI_API_TOKEN]</span></p>
-  <button id="closeOverlay">Close</button>
-</div>
-<script>
-let fullData;
-let currentFocus;
-function fetchData(){
- fetch('treeData.json').then(res=>res.json()).then(data=>{
-  fullData = data;
-  currentFocus = fullData.nodes.find(n=>n.id==="Goal");
-  renderGraph();
- });
-}
-function getChildren(node){
- return fullData.nodes.filter(n=>n.parent===node.id);
-}
-function getParent(node){
- return fullData.nodes.find(n=>n.id===node.parent);
-}
-function isLeaf(node){
- return getChildren(node).length===0;
-}
-function graphData(){
- let nodes = [], links = [];
- if(currentFocus.parent){
-  let parent = getParent(currentFocus);
-  let siblings = fullData.nodes.filter(n=>n.parent===parent.id);
-  nodes.push(parent);
-  siblings.forEach(n=>nodes.push(n));
-  fullData.links.forEach(l=>{
-   if(l.source===parent.id && siblings.find(s=>s.id===l.target)){
-    links.push(l);
-   }
-  });
- } else {
-  nodes.push(currentFocus);
-  let children = getChildren(currentFocus);
-  children.forEach(n=>nodes.push(n));
-  fullData.links.forEach(l=>{
-   if(l.source===currentFocus.id && children.find(c=>c.id===l.target)){
-    links.push(l);
-   }
-  });
- }
- return { nodes: nodes, links: links };
-}
-let Graph = ForceGraph()(document.getElementById('graph'))
-  .nodeLabel('id')
-  .onNodeClick(node=>{
-   if(currentFocus.parent && node.id===getParent(currentFocus).id){
-    currentFocus = getParent(currentFocus);
-    document.getElementById('overlay').style.display = 'none';
-    renderGraph();
-   } else if(node.id!==currentFocus.id){
-    currentFocus = node;
-    if(isLeaf(currentFocus)){
-     document.getElementById('overlay').style.display = 'block';
-    } else {
-     document.getElementById('overlay').style.display = 'none';
-    }
-    renderGraph();
-   }
-  });
-function renderGraph(){
- Graph.graphData(graphData());
-}
-document.getElementById('closeOverlay').addEventListener('click',function(){
- document.getElementById('overlay').style.display = 'none';
-});
-fetchData();
-</script>
-</body>
-</html>
+    <style> body { margin: 0; } </style>
+    <script src="//cdn.jsdelivr.net/npm/force-graph"></script>
+    <!--<script src="../../dist/force-graph.js"></script>-->
+  </head>
+  
+  <body>
+    <div id="graph"></div>
+  
+    <script type="module">
+      import { csvParse } from 'https://esm.sh/d3-dsv';
+      import { forceCollide } from 'https://esm.sh/d3-force';
+      import { GUI } from 'https://esm.sh/dat.gui';
+  
+      // controls
+      const controls = { 'DAG Orientation': 'td'};
+      const gui = new GUI();
+      gui.add(controls, 'DAG Orientation', ['td', 'bu', 'lr', 'rl', 'radialout', 'radialin', null])
+        .onChange(orientation => graph && graph.dagMode(orientation));
+  
+      // graph config
+      const NODE_REL_SIZE = 1;
+      const graph = new ForceGraph(document.getElementById('graph'))
+        .dagMode('td')
+        .dagLevelDistance(50)
+        .backgroundColor('#101020')
+        .linkColor(() => 'rgba(255,255,255,0.2)')
+        .nodeRelSize(NODE_REL_SIZE)
+        .nodeId('path')
+        .nodeVal(node => 100 / (node.level + 1))
+        .nodeLabel('path')
+        .nodeAutoColorBy('module')
+        .linkDirectionalParticles(2)
+        .linkDirectionalParticleWidth(2)
+        .d3Force('collision', forceCollide(node => Math.sqrt(100 / (node.level + 1)) * NODE_REL_SIZE))
+        .d3VelocityDecay(0.3)
+        .d3Force('horizontalSeparation', alpha => {
+            const nodes = graph.graphData().nodes;
+            const minDistance = 100; 
+            for (let i = 0; i < nodes.length; i++) {
+            for (let j = i + 1; j < nodes.length; j++) {
+                const nodeA = nodes[i],
+                    nodeB = nodes[j];
+                if (nodeA.level === nodeB.level) {
+                const dx = nodeA.x - nodeB.x,
+                        absDx = Math.abs(dx);
+                if (absDx < minDistance) {
+                    const adjustment = (minDistance - absDx) * alpha * 0.5;
+                    const sign = dx < 0 ? -1 : 1;
+                    nodeA.vx += sign * adjustment;
+                    nodeB.vx -= sign * adjustment;
+                }
+                }
+            }
+            }
+        })
+        .onNodeClick(node => {
+            graph.centerAt(node.x, node.y+30, 1000);
+            graph.zoom(6, 1000); 
+        });
+
+  
+      fetch('treeData.csv')
+        .then(r => r.text())
+        .then(csvParse)
+        .then(data => {
+          const nodes = [], links = [];
+          data.forEach(({ size, path }) => {
+            const levels = path.split('/'),
+              level = levels.length - 1,
+              module = level > 0 ? levels[1] : null,
+              leaf = levels.pop(),
+              parent = levels.join('/');
+  
+            const node = {
+              path,
+              leaf,
+              module,
+              size: +size || 20,
+              level
+            };
+  
+            nodes.push(node);
+  
+            if (parent) {
+              links.push({source: parent, target: path, targetNode: node});
+            }
+          });
+  
+          graph.graphData({ nodes, links });
+        });
+    </script>
+  </body>
+  
