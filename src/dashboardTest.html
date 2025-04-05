@@ -301,7 +301,8 @@
             showNodeOptions(node, children);
           }, 1100);
         } else {
-          openModal();
+          // Use the node's component property to load the correct component
+          openModal(node.component);
         }
       });
 
@@ -362,7 +363,7 @@
       function openModal() {
         const modal = document.getElementById("modalOverlay");
         modal.style.display = "block";
-        document.getElementById("modalContent").src = "pastclass.html";
+        document.getElementById("modalContent").src = componentUrl;
       }
 
       function closeModal() {
@@ -370,24 +371,35 @@
       }
 
       // --- Load and process CSV data ---
-      fetch("treeData.csv")
+      fetch("treeDataTest.csv")
         .then((r) => r.text())
         .then(csvParse)
         .then((data) => {
           const nodes = [],
             links = [];
-          data.forEach(({ size, path }) => {
-            const levels = path.split("/"),
-              level = levels.length - 1,
-              module = level > 0 ? levels[1] : null,
-              leaf = levels.pop(),
-              parent = levels.join("/");
-            const node = { path, leaf, module, size: +size || 20, level };
-            nodes.push(node);
-            if (parent) {
-              links.push({ source: parent, target: path });
-            }
-          });
+            data.forEach(({ size, path, component }) => {
+              const levels = path.split("/"),
+                level = levels.length - 1,
+                module = level > 0 ? levels[1] : null,
+                leaf = levels.pop(),
+                parent = levels.join("/");
+              const node = {
+                path,
+                leaf,
+                module,
+                size: +size || 20,
+                level,
+              };
+              if (component) {
+                node.component = component;
+              }
+              nodes.push(node);
+              if (parent) {
+                links.push({ source: parent, target: path });
+              }
+            });
+
+
           const childrenMap = {};
           nodes.forEach((n) => {
             childrenMap[n.path] = [];
