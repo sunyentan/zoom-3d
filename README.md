@@ -1,6 +1,7 @@
 <div align="start">
   <img src="media/zoomed-logo.jpg" alt="ZOOM3D Logo" width="100"/>
 </div>
+## ZOOM3D (Zoom Education)
 
 ## Problem Statement
 ### Student Struggles
