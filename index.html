@@ -1,98 +1,76 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta charset="UTF-8" />
-    <title>Zoom3D Setup</title>
-    <link rel="stylesheet" href="src/setup.css?v=2" />
-    <style>
-      
-    </style>
+  <meta charset="UTF-8" />
+  <title>Zoom3D Setup</title>
+  <link rel="stylesheet" href="src/setup.css?v=2" />
 </head>
 <body>
-    <img src="media/zoomed-logo.jpg" alt="Zoom3D Logo" class="logo" />
-    <div class="container">
-        <div id="step1">
-            <h2>Setup - Step 1</h2>
-            <form id="form1">
-                <input type="text" id="firstName" placeholder="First Name" required /><br /><br />
-                <input type="text" id="lastName" placeholder="Last Name" required /><br /><br />
-                <input type="text" id="major" placeholder="Major" required /><br /><br />
-                <input type="number" id="gradYear" placeholder="Graduation Year" required /><br /><br />
-                <button type="button" class="button next" data-hash="#step2">Next</button>
-            </form>
-        </div>
-        <div id="step2" class="hidden">
-            <h2>Setup - Step 2</h2>
-            <form id="form2">
-                <select id="goal" required>
-                    <option value="">Select Goal</option>
-                    <option value="Learn">Learn</option>
-                    <option value="Career Advancement">Career Advancement</option>
-                    <option value="Research">Research</option>
-                </select><br /><br />
-                <button type="button" class="button prev" data-hash="#">Previous</button>
-                <button type="button" class="button next" data-hash="#step3">Next</button>
-            </form>
-        </div>
-        <div id="step3" class="hidden">
-            <h2>Setup - Step 3</h2>
-            <form id="form3">
-                <select id="careerPathway" required>
-                    <option value="">Select Career Pathway</option>
-                    <option value="Industry">Industry</option>
-                    <option value="Academia">Academia</option>
-                    <option value="Entrepreneurship">Entrepreneurship</option>
-                </select><br /><br />
-                <button type="button" class="button prev" data-hash="#step2">Previous</button>
-                <button type="button" class="button next" onclick="window.location.href='dashboard.html'">Finish</button>
-            </form>
-        </div>
+  <img src="media/zoomed-logo.jpg" alt="Zoom3D Logo" class="logo" />
+  <div class="container">
+    <div id="step1" class="step">
+      <h2>Setup - Step 1</h2>
+      <form id="form1">
+        <input type="text" id="firstName" placeholder="First Name" required /><br /><br />
+        <input type="text" id="lastName" placeholder="Last Name" required /><br /><br />
+        <input type="text" id="major" placeholder="Major" required /><br /><br />
+        <input type="number" id="gradYear" placeholder="Graduation Year" required /><br /><br />
+        <button type="button" class="button next" data-next-step="2">Next</button>
+      </form>
     </div>
 
-    <script>
-        // Handle hash changes to show the correct step
-        function showStepFromHash() {
-            // Hide all steps
-            document.querySelectorAll('.container > div').forEach(div => {
-                div.classList.add('hidden');
-            });
-            
-            // Show the current step based on hash
-            const hash = window.location.hash;
-            if (hash === '#step2') {
-                document.getElementById('step2').classList.remove('hidden');
-            } else if (hash === '#step3') {
-                document.getElementById('step3').classList.remove('hidden');
-            } else {
-                // Default to step 1
-                document.getElementById('step1').classList.remove('hidden');
-            }
-        }
+    <div id="step2" class="step" style="display: none;">
+      <h2>Setup - Step 2</h2>
+      <form id="form2">
+        <select id="goal" required>
+          <option value="">Select Goal</option>
+          <option value="Learn">Learn</option>
+          <option value="Career Advancement">Career Advancement</option>
+          <option value="Research">Research</option>
+        </select><br /><br />
+        <button type="button" class="button prev" data-prev-step="1">Previous</button>
+        <button type="button" class="button next" data-next-step="3">Next</button>
+      </form>
+    </div>
 
-        // Initialize on page load
-        window.addEventListener('load', showStepFromHash);
-        
-        // Update when hash changes (back/forward buttons)
-        window.addEventListener('hashchange', showStepFromHash);
+    <div id="step3" class="step" style="display: none;">
+      <h2>Setup - Step 3</h2>
+      <form id="form3">
+        <select id="careerPathway" required>
+          <option value="">Select Career Pathway</option>
+          <option value="Industry">Industry</option>
+          <option value="Academia">Academia</option>
+          <option value="Entrepreneurship">Entrepreneurship</option>
+        </select><br /><br />
+        <button type="button" class="button prev" data-prev-step="2">Previous</button>
+        <button type="button" class="button finish">Finish</button>
+      </form>
+    </div>
+  </div>
 
-        // Handle button clicks to change hash
-        document.addEventListener('click', function(e) {
-            if (e.target.matches('button[data-hash]')) {
-                window.location.hash = e.target.getAttribute('data-hash');
-            }
-        });
+  <script>
+    let currentStep = 1;
+    const steps = document.querySelectorAll('.step');
 
-        // Optional: Save form data when navigating
-        const formData = {};
-        document.querySelectorAll('button[data-hash]').forEach(button => {
-            button.addEventListener('click', function() {
-                const currentStep = this.closest('div[id^="step"]').id;
-                const inputs = document.querySelectorAll(`#${currentStep} input, #${currentStep} select`);
-                inputs.forEach(input => {
-                    formData[input.id] = input.value;
-                });
-            });
-        });
-    </script>
+    function showStep(step) {
+      steps.forEach(function(s) {
+        s.style.display = 'none';
+      });
+      document.getElementById('step' + step).style.display = 'block';
+      currentStep = step;
+    }
+
+    document.addEventListener('click', function(e) {
+      if (e.target.matches('[data-next-step]')) {
+        const nextStep = e.target.getAttribute('data-next-step');
+        showStep(nextStep);
+      } else if (e.target.matches('[data-prev-step]')) {
+        const prevStep = e.target.getAttribute('data-prev-step');
+        showStep(prevStep);
+      } else if (e.target.matches('.finish')) {
+        window.location.href = 'src/dashboard.html';
+      }
+    });
+  </script>
 </body>
 </html>
