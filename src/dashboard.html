@@ -75,7 +75,8 @@
       // Controls including new initialZoom option (lower value = more zoomed out)
       const controls = { 
         "DAG Orientation": "td",
-        initialZoom: 0.3
+        initialZoom: 0.3,
+        fontSizeMultiplier: 2
       };
       const pathToComponent = {
         "Goals/Software Engineering/Events/Past Events/Software Engineers Zoom Panel": "pastevents.html",
@@ -83,12 +84,12 @@
         "Goals/Software Engineering/Events/Suggested Events/Resume Workshop": "futureevents.html",
         "Goals/Software Engineering/Jobs/Software Engineer": "jobs.html",
         "Goals/Software Engineering/Jobs/Backend Developer": "jobs.html",
-        "Goals/Software Engineering/Class/Past Classes/CSE110": "pastclass.html",
-        "Goals/Software Engineering/Class/Past Classes/CSE205": "pastclass.html",
-        "Goals/Software Engineering/Class/Past Classes/CSE240": "pastclass.html",
-        "Goals/Software Engineering/Class/Current Classes/CSE330": "pastclass.html",
+        "Goals/Software Engineering/Class/Past Classes/CSE110": "pastclass1.html",
+        "Goals/Software Engineering/Class/Past Classes/CSE205": "pastclass1.html",
+        "Goals/Software Engineering/Class/Past Classes/CSE240": "pastclass1.html",
+        "Goals/Software Engineering/Class/Current Classes/CSE330": "pastclass1.html",
         "Goals/Software Engineering/Class/Current Classes/CSE340": "pastclass1.html",
-        "Goals/Software Engineering/Class/Current Classes/CSE355": "pastclass.html",
+        "Goals/Software Engineering/Class/Current Classes/CSE355": "pastclass1.html",
         "Goals/Software Engineering/Class/Future Classes/CSE445": "futureclass.html",
         "Goals/Software Engineering/Class/Future Classes/CSE460": "futureclass.html",
         "Goals/Software Engineering/Class/Future Classes/CSE450": "futureclass.html",
@@ -98,12 +99,12 @@
         "Goals/Cyber Security/Events/Suggested Events/Resume Workshop": "futureevents.html",
         "Goals/Cyber Security/Jobs/Security Guard": "jobs.html",
         "Goals/Cyber Security/Jobs/Cyber Sec Dude": "jobs.html",
-        "Goals/Cyber Security/Class/Past Classes/CSE110": "pastclass.html",
-        "Goals/Cyber Security/Class/Past Classes/CSE205": "pastclass.html",
-        "Goals/Cyber Security/Class/Past Classes/CSE240": "pastclass.html",
-        "Goals/Cyber Security/Class/Current Classes/CSE330": "pastclass.html",
-        "Goals/Cyber Security/Class/Current Classes/CSE340": "pastclass.html",
-        "Goals/Cyber Security/Class/Current Classes/CSE355": "pastclass.html",
+        "Goals/Cyber Security/Class/Past Classes/CSE110": "pastclass1.html",
+        "Goals/Cyber Security/Class/Past Classes/CSE205": "pastclass1.html",
+        "Goals/Cyber Security/Class/Past Classes/CSE240": "pastclass1.html",
+        "Goals/Cyber Security/Class/Current Classes/CSE330": "pastclass1.html",
+        "Goals/Cyber Security/Class/Current Classes/CSE340": "pastclass1.html",
+        "Goals/Cyber Security/Class/Current Classes/CSE355": "pastclass1.html",
         "Goals/Cyber Security/Class/Future Classes/CSE445": "futureclass.html",
         "Goals/Cyber Security/Class/Future Classes/CSE460": "futureclass.html",
         "Goals/Cyber Security/Class/Future Classes/CSE450": "futureclass.html",
@@ -142,7 +143,7 @@
         .nodeAutoColorBy("module")
         .nodeCanvasObject((node, ctx, globalScale) => {
           const label = node.leaf;
-          const fontSize = 12 / globalScale;
+          const fontSize = (12 * controls.fontSizeMultiplier) / globalScale;
           ctx.font = `${fontSize}px Sans-Serif`;
           const textWidth = ctx.measureText(label).width;
           const bckgDimensions = [textWidth, fontSize].map(
@@ -277,7 +278,7 @@
       // and then, after a short delay, either shows node options (if the node has children) or opens the modal.
       function navigateToNode(node) {
         hideNodeOptions();
-        graph.centerAt(node.x, node.y + 30, 2000);
+        graph.centerAt(node.x, node.y + 10, 2000);
         graph.zoom(6, 2000);
         setTimeout(() => {
           const children = graph.childrenMap[node.path];
@@ -364,7 +365,7 @@
         const iframe = document.getElementById("modalContent");
         modal.style.display = "block";
         const customSrc = pathToComponent[node.path];
-        iframe.src = customSrc || "default.html"; 
+        iframe.src = customSrc || "pastclass1.html"; 
       }
 
       function closeModal() {
